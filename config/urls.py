@@ -21,7 +21,6 @@ from myapp.views import hello
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('hello/',hello),
     path('',include('myapp.urls')),
-    path('hello/',hello)
-  
 ]

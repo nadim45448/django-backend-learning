@@ -52,11 +52,21 @@ def hello_user(request, name):
 
 # returning json from django
 def product_details(request, product_id):
-    return JsonResponse({
-        "id":product_id,
-        "name":"Laptop",
-        "price":800
-    })
+
+    # dummy data
+    # return JsonResponse({
+    #     "id":product_id,
+    #     "name":"Laptop",
+    #     "price":800
+    # })
+
+    for product in products_data:
+        if product["id"] == product_id:
+            return JsonResponse(product)
+    return JsonResponse(
+            {"error":"Product not found"},
+             status=404
+        )
     
 # GET vs POST
 @csrf_exempt
