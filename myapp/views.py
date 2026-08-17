@@ -5,6 +5,24 @@ import json
 
 # Create your views here.
 
+products_data = [
+    {
+        "id": 1,
+        "name": "Laptop",
+        "price": 900
+    },
+    {
+        "id": 2,
+        "name": "Keyboard",
+        "price": 150
+    },
+    {
+        "id": 3,
+        "name": "Mouse",
+        "price": 50
+    }
+]
+
 def index(request):
     return HttpResponse('<h1> Welcome to django learning </h1>')
 
@@ -39,34 +57,15 @@ def product_details(request, product_id):
         "name":"Laptop",
         "price":800
     })
-
-def product_list(request):
-    products_list = [
-        {
-            "id":1,
-            "name":"Laptop",
-            "price":900
-        },
-        {
-            "id":2,
-            "name":"Keyboard",
-            "price":150
-        },
-        {
-            "id": 3,
-            "name": "Mouse",
-            "price": 50
-        }
-    ]
-    return JsonResponse(products_list, safe=False)
     
 # GET vs POST
 @csrf_exempt
 def products(request):
+    # read
     if request.method == "GET":
-        return JsonResponse({
-            "message":"You sent a GET request"
-        })
+        return JsonResponse(products_data, safe=False)
+    
+    # create
     if request.method == "POST":
         data = json.loads(request.body)
 
@@ -91,7 +90,7 @@ def products(request):
         # 3. check price type
         if not isinstance(price, (int, float)):
             return JsonResponse(
-                {"error":"price must be a number"},
+                {"error":"price must be a n umber"},
                 status=400
             )
 
@@ -101,13 +100,30 @@ def products(request):
                 {"error":"price must be greater than 0"},
                 status=400
             )
+
+        # generate a new id
+        new_id = len(products_data) + 1
+
+        # create the new product
+        new_product = {
+            "id":new_id,
+            "name":name,
+            "price":price
+        }
+
+        # add products to the products_data list
+        products_data.append(new_product)
+
+        # return the created product
+        return JsonResponse(new_product, status=201)
+    
         # everything is valid
-        return JsonResponse({
-            # "message":"You sent a POST request"
-            "message":"Products received",
-            "name":data["name"],
-            "price":data["price"]
-        })
+        # return JsonResponse({
+        #     # "message":"You sent a POST request"
+        #     "message":"Products received",
+        #     "name":data["name"],
+        #     "price":data["price"]
+        # })
     
     # Handle unsupported HTTP methods
     return JsonResponse(
