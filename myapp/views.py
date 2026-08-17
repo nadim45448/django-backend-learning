@@ -23,3 +23,9 @@ def index(request):
 
 def hello(request):
     return HttpResponse("Hello from Django!")
+
+# dynamic path parameter
+def hello_user(request, name):
+    return HttpResponse(
+        f"Hello, {name}!"
+    )
