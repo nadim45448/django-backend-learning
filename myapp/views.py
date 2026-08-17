@@ -51,6 +51,7 @@ def hello_user(request, name):
     )
 
 # returning json from django
+@csrf_exempt
 def product_details(request, product_id):
 
     # dummy data
@@ -62,7 +63,53 @@ def product_details(request, product_id):
 
     for product in products_data:
         if product["id"] == product_id:
-            return JsonResponse(product)
+            # read one
+            if request.method == "GET":
+                return JsonResponse(product)
+            # update
+            if request.method =="PATCH":
+                data = json.loads(request.body)
+                if "price" in data:
+                    price = data["price"]
+
+                    if not isinstance(price,(int,float)):
+                        return JsonResponse(
+                            {"error":"price must be a number"},
+                            status=400
+                        )
+                    if price<=0:
+                        return JsonResponse(
+                            {
+                                "error":"Price must be greater than 0"
+                            },
+                            status = 400
+                        )
+                    product["price"] = price
+
+                if "name" in data:
+                    name = data["name"]
+                    if not isinstance(name, str):
+                        return JsonResponse(
+                            {"error":"Name must be a string"},
+                            status=400
+                        )
+                    if not name:
+                        return JsonResponse(
+                            {"error":"name cannot be empty"},
+                            status=400
+                        )
+                    product["name"] = name
+                return JsonResponse(product)
+            
+            # delete product
+            if request.method == "DELETE":
+                products_data.remove(product)
+
+                return JsonResponse({
+                    "error":"Product deleted successfully"
+                })
+            
+
     return JsonResponse(
             {"error":"Product not found"},
              status=404
