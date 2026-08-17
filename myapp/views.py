@@ -1,5 +1,5 @@
 from django.shortcuts import render 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 # Create your views here.
 
@@ -29,3 +29,32 @@ def hello_user(request, name):
     return HttpResponse(
         f"Hello, {name}!"
     )
+
+# returning json from django
+def product_details(request, product_id):
+    return JsonResponse({
+        "id":product_id,
+        "name":"Laptop",
+        "price":800
+    })
+
+def product_list(request):
+    products_list = [
+        {
+            "id":1,
+            "name":"Laptop",
+            "price":900
+        },
+        {
+            "id":2,
+            "name":"Keyboard",
+            "price":150
+        },
+        {
+            "id": 3,
+            "name": "Mouse",
+            "price": 50
+        }
+    ]
+    return JsonResponse(products_list, safe=False)
+    
