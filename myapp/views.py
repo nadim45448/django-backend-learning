@@ -1,10 +1,12 @@
 from django.shortcuts import render 
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 
 def index(request):
-    # return HttpResponse('<h1> Welcome to django learning </h1>')
+    return HttpResponse('<h1> Welcome to django learning </h1>')
 
     # inspact request object
     # return HttpResponse(
@@ -14,11 +16,11 @@ def index(request):
     # )
 
     # query parameter
-    name = request.GET.get('name')
-    age = request.GET.get('age')
-    return HttpResponse(
-        f"Hello {name}, you are {age} years old."
-    )
+    # name = request.GET.get('name')
+    # age = request.GET.get('age')
+    # return HttpResponse(
+    #     f"Hello {name}, you are {age} years old."
+    # )
 
 
 def hello(request):
@@ -58,3 +60,23 @@ def product_list(request):
     ]
     return JsonResponse(products_list, safe=False)
     
+# GET vs POST
+@csrf_exempt
+def products(request):
+    if request.method == "GET":
+        return JsonResponse({
+            "message":"You sent a GET request"
+        })
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        return JsonResponse({
+            # "message":"You sent a POST request"
+            "message":"Products received",
+            "name":data["name"],
+            "price":data["price"]
+        })
+    return JsonResponse(
+        {"error":"Method not allowed"},
+        status=405
+        )
