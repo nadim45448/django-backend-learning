@@ -70,12 +70,46 @@ def products(request):
     if request.method == "POST":
         data = json.loads(request.body)
 
+        # input validation
+        name = data.get('name')
+        price = data.get('price')
+
+        # 1. Check required fields
+        if not name or price is None:
+            return JsonResponse(
+                {
+                    "error":"name and price are required"
+                },
+                status=400
+            )
+        # 2. check name type
+        if not isinstance(name, str):
+            return JsonResponse(
+                {"error":"name must be a string"},
+                status=400
+            )
+        # 3. check price type
+        if not isinstance(price, (int, float)):
+            return JsonResponse(
+                {"error":"price must be a number"},
+                status=400
+            )
+
+        # 4. check price value
+        if price<=0:
+            return JsonResponse(
+                {"error":"price must be greater than 0"},
+                status=400
+            )
+        # everything is valid
         return JsonResponse({
             # "message":"You sent a POST request"
             "message":"Products received",
             "name":data["name"],
             "price":data["price"]
         })
+    
+    # Handle unsupported HTTP methods
     return JsonResponse(
         {"error":"Method not allowed"},
         status=405
