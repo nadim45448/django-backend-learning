@@ -24,7 +24,8 @@ products_data = [
 ]
 
 def index(request):
-    return HttpResponse('<h1> Welcome to django learning </h1>')
+    # return HttpResponse('<h1> Welcome to django learning </h1>')
+    return render(request, 'index.html')
 
     # inspact request object
     # return HttpResponse(
