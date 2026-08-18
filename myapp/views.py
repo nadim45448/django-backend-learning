@@ -25,7 +25,14 @@ products_data = [
 
 def index(request):
     # return HttpResponse('<h1> Welcome to django learning </h1>')
-    return render(request, 'index.html')
+
+    # send dynamic data to the template
+    context ={
+        'name':"Nadim",
+        'nationality':'Bangladeshi'
+
+    }
+    return render(request, 'index.html', context)
 
     # inspact request object
     # return HttpResponse(
