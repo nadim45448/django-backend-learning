@@ -207,14 +207,31 @@ def counter(request):
     return render(request, 'counter.html', {'word_count': word_count})
 
 # connect API to the DB
+@csrf_exempt
 def items(request):
-    items = Product.objects.all()
-
-    return JsonResponse(
-        {
-            "items":list(items.values("id","name","price"))
-        }
-    )
+    if request.method == "GET":
+        items = Product.objects.all()
+        return JsonResponse(
+            {
+                "items":list(items.values("id","name","price"))
+            }
+        )
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        item = Product.objects.create(
+            name=data['name'],
+            price=data['price']
+        )
+        return JsonResponse(
+            {
+                "item": {
+                    "id": item.id,
+                    "name": item.name,
+                    "price": item.price
+                }
+            },
+            status=201
+        )
 
 def item_details(request, item_id):
     # item = Product.objects.get(id=item_id)
