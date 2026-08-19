@@ -1,2 +1,13 @@
-<h1>Welcome {{name}} </h1>
-<h2>You are {{nationality}}</h2>
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<h1>Welcome to Django</h1>
+
+<p>This is my home page.</p>
+
+{% endblock %}
