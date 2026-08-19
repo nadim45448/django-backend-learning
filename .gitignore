@@ -32,3 +32,5 @@ htmlcov/
 # Django static/media files (if generated locally)
 staticfiles/
 media/
+
+command.txt
