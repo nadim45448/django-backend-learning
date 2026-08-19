@@ -313,6 +313,12 @@ def item_details(request, item_id):
             "price": item.price
         })
 
+    if request.method == "DELETE":
+        item.delete()
+        return JsonResponse({
+            "message": "Item deleted successfully"
+        })
+
     
     
    
