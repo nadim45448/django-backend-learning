@@ -195,3 +195,11 @@ def products(request):
         {"error":"Method not allowed"},
         status=405
         )
+
+def text_input(request):
+    return render(request, 'text-input.html')
+
+def counter(request):
+    words = request.GET.get('text', '')
+    word_count = len(words.split())
+    return render(request, 'counter.html', {'word_count': word_count})
