@@ -217,7 +217,33 @@ def items(request):
             }
         )
     elif request.method == "POST":
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "error": "Invalid JSON data"
+            }, status=400)
+
+        if "name" not in data or "price" not in data:
+            return JsonResponse({
+                "error": "name and price are required"
+            }, status=400)
+        
+        if not data["name"]:
+            return JsonResponse({
+                "error": "name cannot be empty"
+            }, status=400)
+        
+        if not isinstance(data["price"], (int, float)):
+            return JsonResponse({
+                "error": "price must be a number"
+            }, status=400)
+        
+        if data["price"] <= 0:
+            return JsonResponse({
+                "error": "price must be greater than 0"
+            }, status=400)
+
         item = Product.objects.create(
             name=data['name'],
             price=data['price']
