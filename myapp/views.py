@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .models import Product
 
 # Create your views here.
 
@@ -203,3 +204,25 @@ def counter(request):
     words = request.POST.get('text', '')
     word_count = len(words.split())
     return render(request, 'counter.html', {'word_count': word_count})
+
+# connect API to the DB
+def items(request):
+    items = Product.objects.all()
+
+    return JsonResponse(
+        {
+            "items":list(items.values("id","name","price"))
+        }
+    )
+
+def item_details(request, item_id):
+    item = Product.objects.get(id=item_id)
+    return JsonResponse(
+        {
+            "item": {
+                "id": item.id,
+                "name": item.name,
+                "price": item.price
+            }
+        }
+    )
