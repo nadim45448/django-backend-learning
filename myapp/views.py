@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Product
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -216,7 +217,8 @@ def items(request):
     )
 
 def item_details(request, item_id):
-    item = Product.objects.get(id=item_id)
+    # item = Product.objects.get(id=item_id)
+    item = get_object_or_404(Product, id=item_id)
     return JsonResponse(
         {
             "item": {
