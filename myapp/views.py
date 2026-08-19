@@ -1,3 +1,5 @@
+from itertools import product
+
 from django.shortcuts import render 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -258,16 +260,59 @@ def items(request):
             },
             status=201
         )
-
+    
+@csrf_exempt
 def item_details(request, item_id):
     # item = Product.objects.get(id=item_id)
     item = get_object_or_404(Product, id=item_id)
-    return JsonResponse(
-        {
-            "item": {
-                "id": item.id,
-                "name": item.name,
-                "price": item.price
+
+    if request.method == "GET":
+        return JsonResponse(
+            {
+                "item": {
+                    "id": item.id,
+                    "name": item.name,
+                    "price": item.price
+                }
             }
-        }
-    )
+        )
+
+    if request.method == "PATCH":
+
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "error": "Invalid JSON"
+            }, status=400)
+
+        if not data:
+            return JsonResponse({
+                "error": "At least one field is required"
+            }, status=400)
+
+        if "name" in data:
+            if not isinstance(data["name"], str):
+                return JsonResponse({
+                    "error": "Name must be a string"
+                }, status=400)
+            item.name = data["name"]
+
+        if "price" in data:
+            if not isinstance(data["price"], (int, float)):
+                return JsonResponse({
+                    "error": "Price must be a number"
+                }, status=400)
+            item.price = data["price"]
+
+        item.save()
+
+        return JsonResponse({
+            "id": item.id,
+            "name": item.name,
+            "price": item.price
+        })
+
+    
+    
+   
