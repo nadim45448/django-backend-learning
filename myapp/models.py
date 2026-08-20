@@ -36,3 +36,21 @@ class Profile(models.Model):
 
         bio = models.TextField()
         address = models.CharField(max_length=200)
+
+class Course(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Student(models.Model):
+    name = models.CharField(max_length=100)
+
+    courses = models.ManyToManyField(
+        Course,
+        related_name="students"
+    )
+
+    def __str__(self):
+        return self.name
