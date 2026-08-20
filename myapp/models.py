@@ -26,3 +26,13 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         related_name='orders'
     )
+
+class Profile(models.Model):
+        customer = models.OneToOneField(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
+
+        bio = models.TextField()
+        address = models.CharField(max_length=200)
