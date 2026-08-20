@@ -10,4 +10,5 @@ urlpatterns = [
     path('counter/',views.counter, name="counter"),
     path('items/',views.items, name="items"),
     path('items/<int:item_id>/',views.item_details, name="item_details"),
+    path('orders/',views.orders, name="orders"),
 ]

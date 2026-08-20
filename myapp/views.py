@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .models import Product
+from .models import Product, Customer, Order
 from django.shortcuts import get_object_or_404
 
 # Create your views here.
@@ -319,6 +319,28 @@ def item_details(request, item_id):
             "message": "Item deleted successfully"
         })
 
-    
+    # model relationships in an API
+@csrf_exempt
+def orders(request):
+
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        customer = get_object_or_404(Customer, id=data["customer_id"])
+
+        product = get_object_or_404(Product, id=data["product_id"])
+        
+
+        order = Order.objects.create(
+            customer=customer,
+            product=product
+        )
+
+        return JsonResponse({
+            "id": order.id,
+            "customer": order.customer.name,
+            "product": order.product.name
+        }, status=201)
     
    
