@@ -1,11 +1,16 @@
 from itertools import product
-
 from django.shortcuts import render 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Product, Customer, Order
 from django.shortcuts import get_object_or_404
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
+from .serializers import ProductSerializer
 
 # Create your views here.
 
@@ -343,4 +348,18 @@ def orders(request):
             "product": order.product.name
         }, status=201)
     
-   
+@api_view(['POST'])
+def item_create(request):
+
+    serializer = ProductSerializer(
+        data = request.data
+    )
+
+    serializer.is_valid(raise_exception=True)
+
+    serializer.save()
+
+    return Response(
+        serializer.data,
+        status=status.HTTP_201_CREATED
+    )
