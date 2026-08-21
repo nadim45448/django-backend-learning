@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+
 from .serializers import ProductSerializer
 
 # Create your views here.
@@ -403,35 +405,51 @@ def items_details(request, item_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # DRF class-based views
-class ItemListView(APIView):
-    def get(self, request):
-        items = Product.objects.all()
-        serializer = ProductSerializer(items, many=True)
-        return Response(serializer.data)
+# class ItemListView(APIView):
+#     def get(self, request):
+#         items = Product.objects.all()
+#         serializer = ProductSerializer(items, many=True)
+#         return Response(serializer.data)
 
-    def post(self, request):
-        serializer = ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+#     def post(self, request):
+#         serializer = ProductSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# DRF generic class-based views
+class ItemListView(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def perform_create(self, serializer):
+        print("Creating a new product")
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class ItemDetailView(APIView):
-    def get_object(self, item_id):
-        return get_object_or_404(Product, id=item_id)
+# DRF class-based views
+# class ItemDetailView(APIView):
+#     def get_object(self, item_id):
+#         return get_object_or_404(Product, id=item_id)
 
-    def get(self, request, item_id):
-        item = self.get_object(item_id)
-        serializer = ProductSerializer(item)
-        return Response(serializer.data)
+#     def get(self, request, item_id):
+#         item = self.get_object(item_id)
+#         serializer = ProductSerializer(item)
+#         return Response(serializer.data)
 
-    def patch(self, request, item_id):
-        item = self.get_object(item_id)
-        serializer = ProductSerializer(item, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+#     def patch(self, request, item_id):
+#         item = self.get_object(item_id)
+#         serializer = ProductSerializer(item, data=request.data, partial=True)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
 
-    def delete(self, request, item_id):
-        item = self.get_object(item_id)
-        item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+#     def delete(self, request, item_id):
+#         item = self.get_object(item_id)
+#         item.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# DRF generic class-based views
+class ItemDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_url_kwarg = 'item_id'
