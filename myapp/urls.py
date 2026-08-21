@@ -12,4 +12,7 @@ urlpatterns = [
     path('items/<int:item_id>/',views.item_details, name="item_details"),
     path('orders/',views.orders, name="orders"),
     path('item/create/',views.item_create, name="item_create"),
+    path('item/list/',views.item_list, name="item_list"),
+    path('item/',views.item, name="item"),
+    path('item/<int:item_id>/',views.items_details, name="items_details"),
 ]

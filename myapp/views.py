@@ -363,3 +363,40 @@ def item_create(request):
         serializer.data,
         status=status.HTTP_201_CREATED
     )
+@api_view(['GET'])
+def item_list(request):
+    items = Product.objects.all()
+    serializer = ProductSerializer(items, many=True)
+    return Response(serializer.data)
+
+# combine the above two views into a single view using @api_view(['GET', 'POST'])
+@api_view(['GET', 'POST'])
+def item(request):
+    if request.method == "GET":
+        items = Product.objects.all()
+        serializer = ProductSerializer(items, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == "POST":
+        serializer = ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def items_details(request, item_id):
+    item = get_object_or_404(Product, id=item_id)
+
+    if request.method == "GET":
+        serializer = ProductSerializer(item)
+        return Response(serializer.data)
+    
+    elif request.method == "PATCH":
+        serializer = ProductSerializer(item, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    elif request.method == "DELETE":
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
