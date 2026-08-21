@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 
 from .serializers import ProductSerializer
 
@@ -398,5 +399,39 @@ def items_details(request, item_id):
         return Response(serializer.data)
     
     elif request.method == "DELETE":
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# DRF class-based views
+class ItemListView(APIView):
+    def get(self, request):
+        items = Product.objects.all()
+        serializer = ProductSerializer(items, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class ItemDetailView(APIView):
+    def get_object(self, item_id):
+        return get_object_or_404(Product, id=item_id)
+
+    def get(self, request, item_id):
+        item = self.get_object(item_id)
+        serializer = ProductSerializer(item)
+        return Response(serializer.data)
+
+    def patch(self, request, item_id):
+        item = self.get_object(item_id)
+        serializer = ProductSerializer(item, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, item_id):
+        item = self.get_object(item_id)
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
