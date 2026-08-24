@@ -34,3 +34,5 @@ staticfiles/
 media/
 
 command.txt
+setup-postgresql.txt
+

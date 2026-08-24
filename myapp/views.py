@@ -509,5 +509,4 @@ class ItemViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         print("Deleting a product")
         instance.delete()
-
-    
+        
