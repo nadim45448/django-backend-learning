@@ -1,6 +1,7 @@
 from itertools import product
-from django.shortcuts import render 
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponse, JsonResponse, request
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Product, Customer, Order
@@ -509,4 +510,39 @@ class ItemViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         print("Deleting a product")
         instance.delete()
-        
+
+@api_view(["POST"])
+def login_view(request):
+
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(
+        username=username,
+        password=password
+    )
+
+    if user is None:
+        return Response(
+            {"error": "Invalid username or password"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    login(request, user) # login the user in the session
+
+    return Response({
+        "message": "Login successful",
+        "username": user.username
+    })
+
+# Let's Prove the Session Exists
+@api_view(["GET"])
+def profile_view(request):
+    if request.user.is_authenticated:
+        return Response({
+            "message": "You are authenticated ",
+            "username": request.user.username
+        })
+    else:
+        return Response({
+            "message": "You are not authenticated"
+        }, status=status.HTTP_401_UNAUTHORIZED)
